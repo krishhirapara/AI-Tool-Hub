@@ -1,0 +1,43 @@
+# =========================================================
+# AI ToolHub - Netlify settings
+#
+# CUSTOM 404 PAGE: nothing to configure here. Netlify automatically
+# shows the file named 404.html (in the main folder) whenever someone
+# visits an address that does not exist. That is why 404.html is in the
+# main folder and uses paths that start with "/".
+#
+# NETLIFY FORMS: no setting needed here. Netlify finds the two forms
+# ("contact" and "newsletter") in the HTML when you deploy. Make sure
+# Form detection is on in Netlify (see Part 6).
+# =========================================================
+
+# ---------- Security headers (sent with every page) ----------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# ---------- Caching ----------
+# HTML pages: Netlify's default already makes browsers re-check for
+# updates, so you always see new changes. No setting needed.
+#
+# CSS and JavaScript: cached for 1 hour. Short on purpose, because the
+# file names do not change when you edit them.
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Images (SVG logos): cached for 1 day.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
