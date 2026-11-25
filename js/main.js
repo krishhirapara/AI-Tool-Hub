@@ -489,7 +489,7 @@
               return response.json();
             }).then(function (result) {
               if (!result.success) throw new Error("Form not accepted");
-              showStatus(form, "success", "Thanks, your message has been sent.");
+              showStatus(form, "success", "Thanks! We'll reply you soon. Please check your main inbox and your spam folder, and mark us as 'Not spam' if needed..");
               form.reset();
             }).catch(function () {
               showStatus(form, "error", "Sorry, something went wrong. Please try again.");
