@@ -27,9 +27,13 @@
   var bodyField = document.getElementById("review-body");
   var honeypot = document.getElementById("review-website");
   var counter = document.getElementById("review-counter");
+  var ratingField = document.getElementById("review-rating");
+  var ratingHint = document.getElementById("review-rating-hint");
   var status = form && form.querySelector(".form-status");
   var submitButton = form && form.querySelector('button[type="submit"]');
   var apiUrl = SUPABASE_URL.replace(/\/$/, "") + "/rest/v1/reviews";
+  var ratingWords = ["", "Very poor", "Poor", "Okay", "Good", "Excellent"];
+  var hoverRating = 0;
 
   function setError(field, error, message) {
     if (!field || !error) return;
@@ -45,29 +49,98 @@
   }
 
   function updateCounter() {
-    if (counter && bodyField) counter.textContent = bodyField.value.length + "/1000";
+    if (!counter || !bodyField) return;
+    counter.textContent = bodyField.value.length + "/1000";
+    bodyField.style.height = "auto";
+    var maxHeight = 224;
+    var nextHeight = Math.min(bodyField.scrollHeight, maxHeight);
+    bodyField.style.height = nextHeight + "px";
+    bodyField.style.overflowY = bodyField.scrollHeight > maxHeight ? "auto" : "hidden";
+  }
+
+  function getSelectedRating() {
+    if (!form) return 0;
+    var selected = form.querySelector('input[name="rating"]:checked');
+    return selected ? Number(selected.value) || 0 : 0;
+  }
+
+  function updateStars(preview) {
+    if (!form) return;
+    var labels = form.querySelectorAll(".review-star");
+    var selected = getSelectedRating();
+    var active = preview || selected;
+    var i, input;
+    for (i = 0; i < labels.length; i += 1) {
+      input = labels[i].querySelector('input[name="rating"]');
+      var value = input ? Number(input.value) : i + 1;
+      labels[i].classList.toggle("is-filled", value <= active);
+      labels[i].classList.toggle("is-selected", value === selected);
+    }
+  }
+
+  function updateRatingHint() {
+    var value = getSelectedRating();
+    if (ratingHint) ratingHint.textContent = value ? value + " out of 5 - " + ratingWords[value] : "Select a rating";
+    updateStars(hoverRating);
+  }
+
+  function addSummaryMessage() {
+    var strong = document.createElement("strong");
+    var br = document.createElement("br");
+    var note = document.createElement("span");
+    strong.textContent = "No reviews yet";
+    note.textContent = "Tried this tool? Your experience could help the next person decide.";
+    summary.textContent = "";
+    summary.appendChild(strong);
+    summary.appendChild(br);
+    summary.appendChild(note);
+  }
+
+  function initialsFor(value) {
+    var words = String(value || "").trim().split(/\s+/);
+    var initials = "";
+    var i;
+    for (i = 0; i < words.length && initials.length < 2; i += 1) {
+      if (words[i]) initials += words[i].charAt(0).toUpperCase();
+    }
+    return initials || "R";
   }
 
   function render(rows) {
-    var i, row, card, header, name, date, stars, ratingText, text, total = 0;
+    if (!Array.isArray(rows)) throw new Error("invalid review data");
+    var i, row, card, header, avatar, person, name, date, stars, ratingText, text, total = 0;
     list.textContent = "";
-    if (!rows || !rows.length) {
-      summary.textContent = "No reviews yet. Be the first to share your experience.";
+    if (!rows.length) {
+      addSummaryMessage();
       return;
     }
-    for (i = 0; i < rows.length; i += 1) total += Number(rows[i].rating) || 0;
-    summary.textContent = (total / rows.length).toFixed(1) + " out of 5 from " + rows.length + " reader review" + (rows.length === 1 ? "" : "s");
+    for (i = 0; i < rows.length; i += 1) total += Number(rows[i] && rows[i].rating) || 0;
+    var average = (total / rows.length).toFixed(1);
+    summary.textContent = "";
+    var visibleSummary = document.createElement("span");
+    var screenSummary = document.createElement("span");
+    screenSummary.className = "visually-hidden";
+    visibleSummary.textContent = average + " ★ · " + rows.length + " " + (rows.length === 1 ? "review" : "reviews");
+    screenSummary.textContent = average + " out of 5 from " + rows.length + " reader review" + (rows.length === 1 ? "" : "s");
+    summary.appendChild(visibleSummary);
+    summary.appendChild(screenSummary);
     for (i = 0; i < rows.length; i += 1) {
-      row = rows[i];
+      row = rows[i] || {};
       card = document.createElement("li");
       card.className = "reviews-card";
       header = document.createElement("div");
       header.className = "reviews-card__header";
+      person = document.createElement("div");
+      person.className = "reviews-person";
+      avatar = document.createElement("span");
+      avatar.className = "reviews-avatar";
+      avatar.setAttribute("aria-hidden", "true");
+      avatar.textContent = initialsFor(row.display_name);
       name = document.createElement("strong");
-      name.textContent = row.display_name == null ? "Reader" : String(row.display_name);
+      name.className = "reviews-name";
+      name.textContent = row.display_name == null || String(row.display_name).trim() === "" ? "Reader" : String(row.display_name);
       date = document.createElement("time");
       date.className = "reviews-date";
-      date.textContent = "";
       if (row.created_at) {
         var parsed = new Date(row.created_at);
         if (!isNaN(parsed.getTime())) {
@@ -75,7 +148,9 @@
           date.textContent = parsed.toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" });
         }
       }
-      header.appendChild(name);
+      person.appendChild(avatar);
+      person.appendChild(name);
+      header.appendChild(person);
       header.appendChild(date);
       card.appendChild(header);
       stars = document.createElement("span");
@@ -83,7 +158,8 @@
       stars.setAttribute("aria-hidden", "true");
       var starCount = Math.max(0, Math.min(5, Number(row.rating) || 0));
       stars.textContent = "";
-      while (starCount > 0) { stars.textContent += "★"; starCount -= 1; }
+      var j;
+      for (j = 0; j < starCount; j += 1) stars.textContent += "★";
       card.appendChild(stars);
       ratingText = document.createElement("span");
       ratingText.className = "visually-hidden";
@@ -116,29 +192,52 @@
       bodyField.addEventListener("input", updateCounter);
       updateCounter();
     }
+    var starInputs = form.querySelectorAll('input[name="rating"]');
+    var starIndex;
+    for (starIndex = 0; starIndex < starInputs.length; starIndex += 1) {
+      (function (input) {
+        var label = input.parentNode;
+        label.addEventListener("mouseenter", function () { hoverRating = Number(input.value) || 0; updateStars(hoverRating); });
+        input.addEventListener("focus", function () { hoverRating = Number(input.value) || 0; updateStars(hoverRating); });
+        input.addEventListener("blur", function () { hoverRating = 0; updateStars(0); });
+        input.addEventListener("change", function () {
+          hoverRating = 0;
+          updateRatingHint();
+          setError(ratingField, document.getElementById("review-rating-error"), "");
+        });
+      }(starInputs[starIndex]));
+    }
+    var starOptions = form.querySelector(".review-rating__options");
+    if (starOptions) starOptions.addEventListener("mouseleave", function () { hoverRating = 0; updateStars(0); });
+    form.addEventListener("reset", function () {
+      hoverRating = 0;
+      if (ratingHint) ratingHint.textContent = "Select a rating";
+      window.setTimeout(function () { updateCounter(); updateStars(0); }, 0);
+    });
     form.addEventListener("input", function (event) {
       var target = event.target;
       if (target && target.id === "review-name") setError(nameField, document.getElementById("review-name-error"), "");
       if (target && target.id === "review-body") setError(bodyField, document.getElementById("review-body-error"), "");
-      if (target && target.name === "rating") setError(document.getElementById("review-rating"), document.getElementById("review-rating-error"), "");
+      if (target && target.name === "rating") setError(ratingField, document.getElementById("review-rating-error"), "");
     });
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       if (honeypot && honeypot.value) { form.reset(); updateCounter(); showStatus("Thank you! Your review was received and will appear after a quick check.", true); return; }
-      var name = nameField ? nameField.value.trim() : "";
-      var body = bodyField ? bodyField.value.trim() : "";
+      var nameValue = nameField ? nameField.value.trim() : "";
+      var bodyValue = bodyField ? bodyField.value.trim() : "";
       var selected = form.querySelector('input[name="rating"]:checked');
       var nameError = document.getElementById("review-name-error");
       var ratingError = document.getElementById("review-rating-error");
       var bodyError = document.getElementById("review-body-error");
       var valid = true;
       setError(nameField, nameError, "");
-      setError(document.getElementById("review-rating"), ratingError, "");
+      setError(ratingField, ratingError, "");
       setError(bodyField, bodyError, "");
-      if (name.length < 2 || name.length > 40) { setError(nameField, nameError, "Please enter a name between 2 and 40 characters."); valid = false; }
-      if (!selected) { setError(document.getElementById("review-rating"), ratingError, "Please choose a rating."); valid = false; }
-      if (body.length < 20 || body.length > 1000) { setError(bodyField, bodyError, "Please write between 20 and 1000 characters."); valid = false; }
-      if (/http:\/\/|https:\/\/|www\./i.test(body)) { setError(bodyField, bodyError, "Please don't include links."); valid = false; }
+      if (nameValue.length < 2 || nameValue.length > 40) { setError(nameField, nameError, "Please enter a name between 2 and 40 characters."); valid = false; }
+      if (/http:\/\/|https:\/\/|www\./i.test(nameValue)) { setError(nameField, nameError, "Please don't include links"); valid = false; }
+      if (!selected) { setError(ratingField, ratingError, "Please choose a rating."); valid = false; }
+      if (bodyValue.length < 20 || bodyValue.length > 1000) { setError(bodyField, bodyError, "Please write between 20 and 1000 characters."); valid = false; }
+      if (/http:\/\/|https:\/\/|www\./i.test(bodyValue)) { setError(bodyField, bodyError, "Please don't include links."); valid = false; }
       if (!valid) return;
 
       try {
@@ -153,12 +252,11 @@
         fetch(apiUrl, {
           method: "POST",
           headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
-          body: JSON.stringify({ tool_slug: slug, display_name: name, rating: Number(selected.value), body: body })
+          body: JSON.stringify({ tool_slug: slug, display_name: nameValue, rating: Number(selected.value), body: bodyValue })
         }).then(function (response) {
           if (response.status !== 201) throw new Error("submit failed");
           try { localStorage.setItem("aith_review_last_sent", String(Date.now())); localStorage.setItem("aith_reviewed_" + slug, "1"); } catch (e) { /* Ignore storage errors. */ }
           form.reset();
-          updateCounter();
           showStatus("Thank you! Your review was received and will appear after a quick check.", true);
         }).catch(function () {
           showStatus("Sorry, your review couldn't be sent. Please try again later.", false);

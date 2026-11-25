@@ -35,40 +35,44 @@
 <section class="content-block"><h2>Tip for students</h2><div class="callout"><p>Use it for a first visual or edit, then inspect details and confirm current usage rights before publishing.</p></div></section><section class="content-block"><h2>Pricing</h2><p>Generative features and credits depend on Adobe plan; check current plan details.</p><p><a href="https://firefly.adobe.com" target="_blank" rel="noopener noreferrer">Check Adobe Firefly on its official website</a> for current plan details, limits and terms.</p></section>
 <p class="notice">Last checked: November 2026. Tool features, access and plan limits can change. Some other links on this site may be affiliate links; see the site disclosure.</p></div>
 <section class="content-block reviews" id="reviews" aria-labelledby="reviews-title">
-  <h2 id="reviews-title">Reader reviews</h2>
-  <p class="muted reviews-note">Reviews are written by visitors and checked before they appear. They are separate from our own review above.</p>
-  <p id="reviews-summary" class="reviews-summary" role="status" aria-live="polite">Loading reviews…</p>
+  <h2 id="reviews-title">Community reviews</h2>
+  <p class="muted reviews-note">Honest experiences from people who have used this tool. Reviews are written by visitors and checked before they appear, and are separate from our own review above.</p>
+  <div id="reviews-summary" class="reviews-summary" role="status" aria-live="polite">Loading reviews…</div>
   <ul id="reviews-list" class="reviews-list"></ul>
   <form id="review-form" class="review-form" data-review-form novalidate>
-    <h3>Write a review</h3>
+    <h3>Share your experience</h3>
+    <p class="review-form__intro">Used this tool? Tell others what worked, and what didn't.</p>
+    <div class="form-field">
+      <fieldset class="review-rating" id="review-rating" aria-describedby="review-rating-error review-rating-hint">
+        <legend>Your rating</legend>
+        <div class="review-rating__options">
+          <label class="review-star"><input type="radio" name="rating" value="1" required><span class="visually-hidden">1 star</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 17.03l-5.3 2.79 1.01-5.91-4.29-4.18 5.93-.86L12 3.5z"/></svg></label>
+          <label class="review-star"><input type="radio" name="rating" value="2" required><span class="visually-hidden">2 stars</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 17.03l-5.3 2.79 1.01-5.91-4.29-4.18 5.93-.86L12 3.5z"/></svg></label>
+          <label class="review-star"><input type="radio" name="rating" value="3" required><span class="visually-hidden">3 stars</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 17.03l-5.3 2.79 1.01-5.91-4.29-4.18 5.93-.86L12 3.5z"/></svg></label>
+          <label class="review-star"><input type="radio" name="rating" value="4" required><span class="visually-hidden">4 stars</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 17.03l-5.3 2.79 1.01-5.91-4.29-4.18 5.93-.86L12 3.5z"/></svg></label>
+          <label class="review-star"><input type="radio" name="rating" value="5" required><span class="visually-hidden">5 stars</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3.5l2.65 5.37 5.93.86-4.29 4.18 1.01 5.91L12 17.03l-5.3 2.79 1.01-5.91-4.29-4.18 5.93-.86L12 3.5z"/></svg></label>
+        </div>
+        <p class="review-rating__hint" id="review-rating-hint">Select a rating</p>
+        <p class="field-error" id="review-rating-error"></p>
+      </fieldset>
+    </div>
     <div class="form-field">
       <label for="review-name">Display name</label>
-      <input type="text" id="review-name" name="display_name" required minlength="2" maxlength="40" autocomplete="nickname" aria-describedby="review-name-error">
+      <input type="text" id="review-name" name="display_name" placeholder="How your name will appear" required minlength="2" maxlength="40" autocomplete="nickname" aria-describedby="review-name-help review-name-error">
+      <p class="review-help" id="review-name-help">Use a first name or nickname. Please don't include personal details.</p>
       <p class="field-error" id="review-name-error"></p>
     </div>
     <div class="form-field">
-      <fieldset class="review-rating" id="review-rating" aria-describedby="review-rating-error">
-        <legend>Your rating</legend>
-        <div class="review-rating__options">
-          <label><input type="radio" name="rating" value="1" required><span>1</span></label>
-          <label><input type="radio" name="rating" value="2" required><span>2</span></label>
-          <label><input type="radio" name="rating" value="3" required><span>3</span></label>
-          <label><input type="radio" name="rating" value="4" required><span>4</span></label>
-          <label><input type="radio" name="rating" value="5" required><span>5</span></label>
-        </div>
-      </fieldset>
-      <p class="field-error" id="review-rating-error"></p>
-    </div>
-    <div class="form-field">
       <label for="review-body">Your review</label>
-      <textarea id="review-body" name="body" required minlength="20" maxlength="1000" aria-describedby="review-body-error review-counter"></textarea>
-      <div class="review-body-meta"><p class="field-error" id="review-body-error"></p><span class="review-counter" id="review-counter" aria-live="polite">0/1000</span></div>
+      <textarea id="review-body" name="body" placeholder="What did you use it for? What worked well, and what could be better?" required minlength="20" maxlength="1000" rows="4" aria-describedby="review-body-error review-counter"></textarea>
+      <p class="field-error" id="review-body-error"></p>
+      <p class="review-counter" id="review-counter" aria-live="polite">0/1000</p>
     </div>
     <div class="review-honeypot" aria-hidden="true">
       <label for="review-website">Leave this field empty</label>
       <input type="text" id="review-website" name="website" tabindex="-1" autocomplete="off">
     </div>
-    <button class="btn btn--primary" type="submit">Submit review</button>
+    <button class="btn btn--primary review-submit" type="submit">Submit review</button>
     <div class="form-status" role="status" aria-live="polite" hidden></div>
   </form>
   <noscript><p>Please enable JavaScript to read and write reader reviews.</p></noscript>
