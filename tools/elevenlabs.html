@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -240,7 +240,46 @@
       </div>
 
       <!-- ===== SIMILAR TOOLS (cards are built by main.js from the "similar" list in tools-data.js) ===== -->
-      <section class="section" aria-labelledby="similar-title">
+      <section class="content-block reviews" id="reviews" aria-labelledby="reviews-title">
+  <h2 id="reviews-title">Reader reviews</h2>
+  <p class="muted reviews-note">Reviews are written by visitors and checked before they appear. They are separate from our own review above.</p>
+  <p id="reviews-summary" class="reviews-summary" role="status" aria-live="polite">Loading reviews…</p>
+  <ul id="reviews-list" class="reviews-list"></ul>
+  <form id="review-form" class="review-form" data-review-form novalidate>
+    <h3>Write a review</h3>
+    <div class="form-field">
+      <label for="review-name">Display name</label>
+      <input type="text" id="review-name" name="display_name" required minlength="2" maxlength="40" autocomplete="nickname" aria-describedby="review-name-error">
+      <p class="field-error" id="review-name-error"></p>
+    </div>
+    <div class="form-field">
+      <fieldset class="review-rating" id="review-rating" aria-describedby="review-rating-error">
+        <legend>Your rating</legend>
+        <div class="review-rating__options">
+          <label><input type="radio" name="rating" value="1" required><span>1</span></label>
+          <label><input type="radio" name="rating" value="2" required><span>2</span></label>
+          <label><input type="radio" name="rating" value="3" required><span>3</span></label>
+          <label><input type="radio" name="rating" value="4" required><span>4</span></label>
+          <label><input type="radio" name="rating" value="5" required><span>5</span></label>
+        </div>
+      </fieldset>
+      <p class="field-error" id="review-rating-error"></p>
+    </div>
+    <div class="form-field">
+      <label for="review-body">Your review</label>
+      <textarea id="review-body" name="body" required minlength="20" maxlength="1000" aria-describedby="review-body-error review-counter"></textarea>
+      <div class="review-body-meta"><p class="field-error" id="review-body-error"></p><span class="review-counter" id="review-counter" aria-live="polite">0/1000</span></div>
+    </div>
+    <div class="review-honeypot" aria-hidden="true">
+      <label for="review-website">Leave this field empty</label>
+      <input type="text" id="review-website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+    <button class="btn btn--primary" type="submit">Submit review</button>
+    <div class="form-status" role="status" aria-live="polite" hidden></div>
+  </form>
+  <noscript><p>Please enable JavaScript to read and write reader reviews.</p></noscript>
+</section>
+<section class="section" aria-labelledby="similar-title">
         <h2 id="similar-title">Similar tools</h2>
         <div class="grid grid--3" id="similar-tools"></div>
         <noscript>
@@ -287,6 +326,7 @@
 
   <script src="../js/tools-data.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/reviews.js"></script>
 </body>
 </html>
 
