@@ -7,7 +7,7 @@
   <meta name="description" content="AI ToolHub is a simple directory and review site of AI tools for college students and beginners in India: study, assignments, presentations, coding and careers.">
   <link rel="canonical" href="https://aitoolhub.co.in/">
 
-  <!-- Open Graph and Twitter metadata use the custom domain configured for Netlify. -->
+  <!-- Open Graph and Twitter metadata use the site's custom domain. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AI ToolHub">
   <meta property="og:title" content="AI ToolHub - Find the Right AI Tool for Your Studies">
@@ -185,15 +185,13 @@
       </div>
     </section>
 
-    <!-- ===== NEWSLETTER (Netlify Forms) =====
-         NOTE: this form only sends messages AFTER you deploy on Netlify. -->
+    <!-- Newsletter subscribers are saved in Cloudflare D1. -->
     <section class="section section--alt newsletter" aria-labelledby="news-title">
       <div class="container">
         <h2 id="news-title">Get new tool reviews by email</h2>
         <p class="muted">No spam. Just new tools worth knowing about. Unsubscribe any time.</p>
 
-        <form class="form" name="newsletter" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" data-netlify-form data-success="Thank you! You are on the list.">
-          <input type="hidden" name="form-name" value="newsletter">
+        <form class="form" name="newsletter" method="POST" data-netlify-form data-success="Thank you! You are on the list.">
           <!-- Honeypot: hidden from real people, bots fill it in -->
           <p class="honeypot" aria-hidden="true">
             <label>Do not fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label>

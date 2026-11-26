@@ -1,0 +1,11 @@
+src/
+wrangler.jsonc
+wrangler.toml
+netlify.toml
+package.json
+package-lock.json
+.gitignore
+.assetsignore
+.git
+_checks/
+node_modules/

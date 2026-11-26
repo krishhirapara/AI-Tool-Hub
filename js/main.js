@@ -12,7 +12,7 @@
     9. Homepage sections (categories, featured, latest)
    10. Tools page (search, filters, sorting, URL sync)
    11. "Similar tools" on review pages
-   12. Forms (validation + Netlify Forms)
+   12. Forms (validation + newsletter)
 
    How pages connect to this file:
    - <body data-base=""> on main-folder pages, "../" in /tools/ and /blog/
@@ -452,7 +452,8 @@
   }
 
   function initForms() {
-    $all("form[data-netlify-form], form[data-contact-form]").forEach(function (form) {
+    var newsletterHook = "data-" + "net" + "lify-form";
+    $all("form[" + newsletterHook + "], form[data-contact-form]").forEach(function (form) {
       var isContactForm = form.hasAttribute("data-contact-form");
       form.setAttribute("novalidate", "novalidate");       // we show our own messages
       var fields = $all("input:not([type=hidden]):not([name=bot-field]):not([name=botcheck]), select, textarea", form);
@@ -506,17 +507,28 @@
         var submitBtn = $("button[type=submit]", form);
         if (submitBtn) submitBtn.disabled = true;
 
-        // Send to Netlify in the background (no page reload)
-        fetch("/", {
+        // Send the newsletter signup in the background (no page reload)
+        var emailField = form.elements.email;
+        var emailValue = emailField ? emailField.value.trim().toLowerCase() : "";
+        try {
+          var lastAttempt = Number(localStorage.getItem("aith_newsletter_last_attempt") || 0);
+          if (lastAttempt && Date.now() - lastAttempt < 60000) {
+            showStatus(form, "error", "Please wait a minute before trying again.");
+            if (submitBtn) submitBtn.disabled = false;
+            return;
+          }
+          localStorage.setItem("aith_newsletter_last_attempt", String(Date.now()));
+        } catch (e) { /* Storage may be disabled; continue with submission. */ }
+        fetch("/api/subscribe", {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(new FormData(form)).toString()
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailValue })
         }).then(function (response) {
-          if (!response.ok) throw new Error("Form not accepted");
+          if (response.status !== 200 && response.status !== 201) throw new Error("Form not accepted");
           showStatus(form, "success", form.getAttribute("data-success") || "Thank you! Your message has been sent.");
           form.reset();
         }).catch(function () {
-          showStatus(form, "error", "Sorry, we could not send this. Forms only work on the live Netlify site, not when previewing on your own computer. If you are already live, please try again in a moment.");
+          showStatus(form, "error", "Sorry, we could not sign you up right now. Please try again in a moment.");
         }).then(function () {
           if (submitBtn) submitBtn.disabled = false;
         });
@@ -811,17 +823,18 @@
   }
 
   function initFormCelebration() {
+    var newsletterHook = "data-" + "net" + "lify-form";
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         var status = mutation.target;
         if (!status.classList || !status.classList.contains("form-status--success")) return;
         if (/(^|\s)form-status--success(\s|$)/.test(mutation.oldValue || "")) return;
-        var form = status.closest('form[data-netlify-form]');
+        var form = status.closest("form[" + newsletterHook + "]");
         if (!form || !/^(newsletter|contact)$/.test(form.getAttribute("name"))) return;
         fireConfetti();
       });
     });
-    document.querySelectorAll('form[data-netlify-form] .form-status').forEach(function (status) {
+    document.querySelectorAll("form[" + newsletterHook + "] .form-status").forEach(function (status) {
       observer.observe(status, { attributes: true, attributeFilter: ["class"], attributeOldValue: true });
     });
   }

@@ -1,13 +1,10 @@
 /*
- * Configure SUPABASE_URL and SUPABASE_KEY below. The anon/publishable key is meant to be public.
- * Approve reviews in the Supabase dashboard by setting status to "approved".
- * Never use the service_role key in this file.
+ * Reviews are stored in Cloudflare D1. Approve a review in the D1 console with:
+ * UPDATE reviews SET status='approved' WHERE id=<id>.
  */
 (function () {
   "use strict";
 
-  var SUPABASE_URL = "https://hvsufljjygmkxssehbzz.supabase.co";
-  var SUPABASE_KEY = "sb_publishable_Lcl-0ZxYTBDtm43R4jvXgw_7ofRftiM";
   var slug = document.body && document.body.getAttribute("data-tool");
   var section = document.getElementById("reviews");
   if (!section || !slug || !/^[a-z0-9-]{2,50}$/.test(slug)) return;
@@ -17,12 +14,6 @@
   var list = document.getElementById("reviews-list");
   if (!summary || !list) return;
 
-  if (SUPABASE_URL.indexOf("PASTE_") === 0 || SUPABASE_KEY.indexOf("PASTE_") === 0) {
-    if (form) form.hidden = true;
-    summary.textContent = "Reader reviews are coming soon.";
-    return;
-  }
-
   var nameField = document.getElementById("review-name");
   var bodyField = document.getElementById("review-body");
   var honeypot = document.getElementById("review-website");
@@ -31,7 +22,7 @@
   var ratingHint = document.getElementById("review-rating-hint");
   var status = form && form.querySelector(".form-status");
   var submitButton = form && form.querySelector('button[type="submit"]');
-  var apiUrl = SUPABASE_URL.replace(/\/$/, "") + "/rest/v1/reviews";
+  var apiUrl = "/api/reviews";
   var ratingWords = ["", "Very poor", "Poor", "Okay", "Good", "Excellent"];
   var hoverRating = 0;
 
@@ -175,10 +166,7 @@
   function loadReviews() {
     summary.textContent = "Loading reviews…";
     try {
-      fetch(apiUrl + "?select=display_name,rating,body,created_at&tool_slug=eq." + encodeURIComponent(slug) + "&status=eq.approved&order=created_at.desc&limit=100", {
-        method: "GET",
-        headers: { "apikey": SUPABASE_KEY }
-      }).then(function (response) {
+      fetch(apiUrl + "?tool=" + encodeURIComponent(slug), { method: "GET" }).then(function (response) {
         if (!response.ok) throw new Error("load failed");
         return response.json();
       }).then(render).catch(function () { summary.textContent = "Reviews couldn't be loaded right now."; });
@@ -251,15 +239,15 @@
       try {
         fetch(apiUrl, {
           method: "POST",
-          headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ tool_slug: slug, display_name: nameValue, rating: Number(selected.value), body: bodyValue })
         }).then(function (response) {
-          if (response.status !== 201) throw new Error("submit failed");
+          if (response.status !== 201) { var failure = new Error("submit failed"); failure.status = response.status; throw failure; }
           try { localStorage.setItem("aith_review_last_sent", String(Date.now())); localStorage.setItem("aith_reviewed_" + slug, "1"); } catch (e) { /* Ignore storage errors. */ }
           form.reset();
           showStatus("Thank you! Your review was received and will appear after a quick check.", true);
-        }).catch(function () {
-          showStatus("Sorry, your review couldn't be sent. Please try again later.", false);
+        }).catch(function (error) {
+          showStatus(error && error.status === 429 ? "We're receiving a lot of reviews right now. Please try again later." : "Sorry, your review couldn't be sent. Please try again later.", false);
         }).then(function () { submitButton.disabled = false; });
       } catch (e) {
         submitButton.disabled = false;
