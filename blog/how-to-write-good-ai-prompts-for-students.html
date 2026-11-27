@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to Write Good AI Prompts: A Beginner's Guide with Examples | AI ToolHub</title>
+  <meta name="description" content="Learn a simple four-part method for writing clear AI prompts, with before-and-after examples for assignments, coding, presentations and career tasks.">
+  <link rel="canonical" href="https://aitoolhub.co.in/blog/how-to-write-good-ai-prompts-for-students">
+
+  <!-- Open Graph and Twitter metadata use the site's custom domain. -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="AI ToolHub">
+  <meta property="og:title" content="How to Write Good AI Prompts: A Beginner's Guide with Examples">
+  <meta property="og:description" content="Learn a simple four-part method for writing clear AI prompts, with before-and-after examples for assignments, coding, presentations and career tasks.">
+  <meta property="og:url" content="https://aitoolhub.co.in/blog/how-to-write-good-ai-prompts-for-students">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="How to Write Good AI Prompts: A Beginner's Guide with Examples">
+  <meta name="twitter:description" content="Learn a simple four-part method for writing clear AI prompts, with before-and-after examples for assignments, coding, presentations and career tasks.">
+
+  <meta name="theme-color" content="#0B0F19">
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+
+  <!-- Google Fonts (display=swap = show text immediately, swap font when ready) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Sets dark/light mode BEFORE the page paints, so there is no flash -->
+  <script>
+    (function () {
+      var t;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "dark" && t !== "light") {
+        t = "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://aitoolhub.co.in/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://aitoolhub.co.in/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "How to Write Good AI Prompts: A Beginner's Guide with Examples",
+      "item": "https://aitoolhub.co.in/blog/how-to-write-good-ai-prompts-for-students"
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Write Good AI Prompts: A Beginner's Guide with Examples",
+  "description": "Learn a simple four-part method for writing clear AI prompts, with before-and-after examples for assignments, coding, presentations and career tasks.",
+  "datePublished": "2026-11-26",
+  "dateModified": "2026-11-26",
+  "mainEntityOfPage": "https://aitoolhub.co.in/blog/how-to-write-good-ai-prompts-for-students",
+  "image": "https://aitoolhub.co.in/images/logo.svg",
+  "author": {
+    "@type": "Person",
+    "name": "Krish Hirapara",
+    "url": "https://aitoolhub.co.in/about"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI ToolHub",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aitoolhub.co.in/images/logo.svg"
+    }
+  }
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a prompt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A prompt is the message or instruction you give to an AI tool. A clear prompt with context and details usually gets a more useful answer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need special words to write good prompts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Clear, specific plain language works well. State what you want, who it is for, and the format you need."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does AI give different answers to the same prompt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "These tools generate text with some variation, so answers can differ each time. If the answer matters, check it against a reliable source."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to put personal information in a prompt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is best not to. Avoid sharing ID numbers, passwords, bank details or other people's private data. Check each tool's privacy policy."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body data-page="blog" data-base="../">
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ===== HEADER (same on every page) ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo-link" href="../index.html" aria-label="AI ToolHub - home">
+        <img src="../images/logo.svg" alt="AI ToolHub" width="150" height="36">
+      </a>
+      <div class="nav-wrap">
+        <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+          <ul>
+            <li><a href="../index.html" data-nav="home">Home</a></li>
+            <li><a href="../tools.html" data-nav="tools">Tools</a></li>
+            <li><a href="../blog/" data-nav="blog">Blog</a></li>
+            <li><a href="../about.html" data-nav="about">About</a></li>
+            <li><a href="../contact.html" data-nav="contact">Contact</a></li>
+          </ul>
+        </nav>
+        <button type="button" id="theme-toggle" class="icon-btn theme-toggle" aria-label="Switch to dark mode" aria-pressed="false">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button type="button" id="menu-toggle" class="icon-btn menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="container">
+
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="../index.html">Home</a></li>
+          <li aria-current="page">How to Write Good AI Prompts</li>
+        </ol>
+      </nav>
+
+      <article class="prose">
+        <header class="page-title">
+          <h1>How to Write Good AI Prompts: A Beginner&#x27;s Guide with Examples</h1>
+          <p class="article-meta">By <a href="../about.html">Krish Hirapara</a> &middot; Published November 2026 &middot; Last checked: November 2026</p>
+        </header>
+
+        <!-- TODO: add my own experience / testing notes here -->
+
+        <p>If an AI tool gives you a vague or boring answer, the problem is usually the question, not the tool. A good prompt is simply a clear request. You do not need special tricks or secret words. This guide gives you a simple method and examples you can adapt for study, coding and career tasks.</p>
+        <nav aria-label="In this guide">
+          <p><strong>In this guide</strong></p>
+          <ul>
+            <li><a href="#four-parts">The four-part prompt</a></li>
+            <li><a href="#before-after">Before and after examples</a></li>
+            <li><a href="#give-context">Give real context, but not private details</a></li>
+            <li><a href="#iterate">Treat it as a conversation</a></li>
+            <li><a href="#show-example">Show an example of what you want</a></li>
+            <li><a href="#tools-differ">Different tools, same method</a></li>
+            <li><a href="#mistakes">Common prompt mistakes</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <h2 id="four-parts">The four-part prompt</h2>
+<p>Most good prompts have four parts. You do not always need all four, but the more you include, the better the answer tends to be.</p>
+<ol>
+<li><strong>Role or context:</strong> who you are and what the situation is.</li>
+<li><strong>Task:</strong> exactly what you want done.</li>
+<li><strong>Details:</strong> length, level, format, points to include or avoid.</li>
+<li><strong>Output style:</strong> bullets, table, short paragraphs, code only.</li>
+</ol>
+
+        <h2 id="before-after">Before and after examples</h2>
+<div class="table-wrap"><table>
+<caption>Weak prompts compared with better prompts</caption>
+<thead><tr><th scope="col">Weak prompt</th><th scope="col">Better prompt</th></tr></thead>
+<tbody>
+<tr><td>Explain machine learning.</td><td>I am a third-year B.Tech CSE student. Explain machine learning in simple words, with one example about predicting exam marks, in under 200 words.</td></tr>
+<tr><td>Write a resume.</td><td>Here is my draft resume. Suggest improvements to the project descriptions only. Keep each bullet under 20 words and start with an action verb. Do not invent anything I did not write.</td></tr>
+<tr><td>Fix my code.</td><td>This Python function should return the average of a list but fails on an empty list. Here is the code and the error. Explain the cause first, then show the corrected version.</td></tr>
+<tr><td>Make a presentation.</td><td>Outline a 6-slide presentation on renewable energy in India for a college seminar. Give each slide a title and three short bullet points.</td></tr>
+</tbody></table></div>
+
+        <h2 id="give-context">Give real context, but not private details</h2>
+<p>The tool cannot see your syllabus, your teacher or your goals unless you say so. Mention your year, subject, and what the answer will be used for. At the same time, avoid putting private information into any AI tool: Aadhaar or PAN numbers, passwords, bank details, phone numbers, or other people&rsquo;s personal data. Treat a chat window like a public place.</p>
+
+        <h2 id="iterate">Treat it as a conversation</h2>
+<p>The first answer is a draft. Follow up with short instructions:</p>
+<ul>
+<li>&ldquo;Make it shorter.&rdquo;</li>
+<li>&ldquo;Explain the second point with an example.&rdquo;</li>
+<li>&ldquo;Now rewrite it in a more formal tone.&rdquo;</li>
+<li>&ldquo;What might be wrong or missing in your answer?&rdquo;</li>
+</ul>
+<p>The last one is especially useful. Asking the tool to point out weak spots in its own answer often reveals things worth checking yourself.</p>
+
+        <h2 id="show-example">Show an example of what you want</h2>
+<p>If you want a certain style, paste a short sample and say &ldquo;write in this style.&rdquo; For data or code, show one example input and the output you expect. Examples remove a lot of guesswork.</p>
+
+        <h2 id="tools-differ">Different tools, same method</h2>
+<p>The same method works in <a href="../tools/chatgpt.html">ChatGPT</a>, <a href="../tools/claude.html">Claude</a>, <a href="../tools/google-gemini.html">Google Gemini</a> and <a href="../tools/perplexity.html">Perplexity</a>. Perplexity is better when you want an answer with sources, so phrase your question as something you can check. For images in <a href="../tools/ideogram.html">Ideogram</a> or <a href="../tools/adobe-firefly.html">Adobe Firefly</a>, describe the subject, style, colours and where the image will be used.</p>
+
+        <h2 id="mistakes">Common prompt mistakes</h2>
+<ul>
+<li>Asking several unrelated things in one message.</li>
+<li>Leaving out the level, so the answer is too advanced or too basic.</li>
+<li>Accepting the first answer without checking it.</li>
+<li>Asking for a finished assignment instead of help with a part of it.</li>
+</ul>
+
+        <section class="content-block"><h2 id="faq">FAQ</h2><h3>What is a prompt?</h3><p>A prompt is the message or instruction you give to an AI tool. A clear prompt with context and details usually gets a more useful answer.</p><h3>Do I need special words to write good prompts?</h3><p>No. Clear, specific plain language works well. State what you want, who it is for, and the format you need.</p><h3>Why does AI give different answers to the same prompt?</h3><p>These tools generate text with some variation, so answers can differ each time. If the answer matters, check it against a reliable source.</p><h3>Is it safe to put personal information in a prompt?</h3><p>It is best not to. Avoid sharing ID numbers, passwords, bank details or other people&#x27;s private data. Check each tool&#x27;s privacy policy.</p></section>
+
+        <h2 id="final-thoughts">Final thoughts</h2>
+        <p>Be specific, give context, set a format, and then improve the answer with follow-up messages. Practice on a real task today, such as one topic from your syllabus. For tools to practise with, see our <a href="../tools.html">directory</a>.</p>
+        <p class="notice">Written by <a href="../about.html">Krish Hirapara</a>, a B.Tech Computer Science and Engineering student who started AI ToolHub to help students in India find useful AI tools.</p>
+
+        <p class="notice">Affiliate disclosure: some links to tools on this site are affiliate links, which may earn us a commission at no extra cost to you. Links in this article go to our own review pages. This never changes our honest opinion of a tool.</p>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- ===== FOOTER (same on every page) ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>AI ToolHub</h2>
+          <p class="muted">A friendly directory and review site of AI tools for college students and beginners in India.</p>
+        </div>
+        <div>
+          <h2>Explore</h2>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../tools.html">All tools</a></li>
+            <li><a href="../blog/">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Company</h2>
+          <ul>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+            <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-disclosure"><strong>Affiliate disclosure:</strong> Some links on this site are affiliate links. If you sign up or buy through them, we may earn a small commission at no extra cost to you. This never changes our honest opinion of a tool.</p>
+      <p class="footer-copy">&copy; <span class="js-year">2026</span> AI ToolHub. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../js/tools-data.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
