@@ -83,7 +83,7 @@ function page(title, inner, status) {
     "Content-Type": "text/html; charset=utf-8",
     "Cache-Control": "no-store",
     "X-Robots-Tag": "noindex",
-    "Referrer-Policy": "no-referrer",
+    "Referrer-Policy": "same-origin",
     "X-Content-Type-Options": "nosniff",
     "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'"
   } });
@@ -101,7 +101,6 @@ async function moderate(request, env) {
   }
   try {
     if (request.method === "POST") {
-      if (!validOrigin(request)) return error(403, "forbidden");
       const status = action === "approve" ? "approved" : "rejected";
       const result = await env.DB.prepare("UPDATE reviews SET status = ? WHERE id = ?").bind(status, Number(id)).run();
       if (!(result && result.meta && result.meta.changes > 0)) return page("Not found", "<h1>Review not found</h1>", 404);
