@@ -55,6 +55,12 @@ function cleanText(value) {
 async function reviews(request, env) {
   const url = new URL(request.url);
   if (request.method === "GET") {
+    if (url.searchParams.get("latest") === "1") {
+      try {
+        const latest = await env.DB.prepare("SELECT tool_slug, display_name, rating, body, created_at FROM reviews WHERE status = 'approved' ORDER BY created_at DESC LIMIT 6").all();
+        return json(latest.results || [], 200, { "Cache-Control": "public, max-age=60" });
+      } catch { return error(500, "server"); }
+    }
     const slug = url.searchParams.get("tool") || "";
     if (!SLUG_PATTERN.test(slug)) return json([], 400);
     try {

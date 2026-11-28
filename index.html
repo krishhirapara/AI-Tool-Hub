@@ -36,6 +36,7 @@
   </script>
 
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/home-reviews.css">
 
   <!-- Structured data: WebSite -->
   <script type="application/ld+json">
@@ -149,6 +150,17 @@
       </div>
     </section>
 
+    <!-- ===== READER REVIEWS (loaded from /api/reviews?latest=1; stays hidden until there is at least one approved review) ===== -->
+    <section class="section home-reviews" id="home-reviews" aria-labelledby="home-reviews-title" hidden>
+      <div class="container">
+        <div class="section__head">
+          <h2 id="home-reviews-title">What readers say</h2>
+        </div>
+        <p class="muted">Real reviews from students who used these tools.</p>
+        <ul class="reviews-list" id="home-reviews-list"></ul>
+      </div>
+    </section>
+
     <!-- ===== WHY TRUST ===== -->
     <section class="section section--alt" aria-labelledby="trust-title">
       <div class="container">
@@ -244,5 +256,6 @@
 
   <script src="js/tools-data.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/home-reviews.js"></script>
 </body>
 </html>

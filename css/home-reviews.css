@@ -1,0 +1,6 @@
+/* Reader reviews on the home page. Card styles come from style.css (.reviews-card etc.). */
+.home-reviews[hidden] { display: none; }
+.home-reviews .reviews-list { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: stretch; margin-bottom: 0; }
+.home-reviews .reviews-card { display: flex; flex-direction: column; }
+.home-reviews .reviews-card p { flex: 1 1 auto; }
+.home-reviews .reviews-tool { display: inline-block; margin-top: .75rem; font-size: .9rem; font-weight: 650; }
