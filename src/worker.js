@@ -52,7 +52,93 @@ function cleanText(value) {
   return value.replace(/[\u0000-\u001f\u007f-\u009f]/g, "").trim();
 }
 
-async function reviews(request, env) {
+// ---- Owner notification and one-click moderation (signed links) ----
+const encoder = new TextEncoder();
+
+async function hmacKey(secret) {
+  return crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+}
+
+async function signLink(secret, id, action) {
+  const sig = await crypto.subtle.sign("HMAC", await hmacKey(secret), encoder.encode(id + ":" + action));
+  return Array.from(new Uint8Array(sig)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+}
+
+async function validSignature(secret, id, action, sig) {
+  if (!/^[0-9a-f]{64}$/.test(sig || "")) return false;
+  const bytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i += 1) bytes[i] = parseInt(sig.substr(i * 2, 2), 16);
+  return crypto.subtle.verify("HMAC", await hmacKey(secret), bytes, encoder.encode(id + ":" + action));
+}
+
+function esc(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function page(title, inner, status) {
+  const html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>' + esc(title) + '</title><style>body{font-family:system-ui,sans-serif;max-width:34rem;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#111}blockquote{margin:1rem 0;padding:.75rem 1rem;background:#f3f3f7;border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere}button{font:inherit;padding:.7rem 1.4rem;border:0;border-radius:8px;background:#6d28d9;color:#fff;cursor:pointer}button.reject{background:#b91c1c}</style></head><body>' + inner + '</body></html>';
+  return new Response(html, { status: status || 200, headers: {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'"
+  } });
+}
+
+async function moderate(request, env) {
+  if (!env.MODERATE_SECRET) return error(404, "not_found");
+  if (request.method !== "GET" && request.method !== "POST") return error(405, "method_not_allowed", { Allow: "GET, POST" });
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id") || "";
+  const action = url.searchParams.get("action") || "";
+  const sig = url.searchParams.get("sig") || "";
+  if (!/^\d{1,9}$/.test(id) || (action !== "approve" && action !== "reject") || !(await validSignature(env.MODERATE_SECRET, id, action, sig))) {
+    return page("Link not valid", "<h1>This link is not valid</h1><p>Use the buttons in the newest email, or use the D1 console.</p>", 403);
+  }
+  try {
+    if (request.method === "POST") {
+      if (!validOrigin(request)) return error(403, "forbidden");
+      const status = action === "approve" ? "approved" : "rejected";
+      const result = await env.DB.prepare("UPDATE reviews SET status = ? WHERE id = ?").bind(status, Number(id)).run();
+      if (!(result && result.meta && result.meta.changes > 0)) return page("Not found", "<h1>Review not found</h1>", 404);
+      return page("Done", "<h1>Done</h1><p>Review " + esc(id) + " is now <strong>" + status + "</strong>.</p>");
+    }
+    const row = await env.DB.prepare("SELECT tool_slug, display_name, rating, body, status FROM reviews WHERE id = ?").bind(Number(id)).first();
+    if (!row) return page("Not found", "<h1>Review not found</h1>", 404);
+    const label = action === "approve" ? "Approve" : "Reject";
+    return page(label + " review?", "<h1>" + label + " this review?</h1><p>Tool: <strong>" + esc(row.tool_slug) + "</strong><br>Name: " + esc(row.display_name) + "<br>Rating: " + esc(row.rating) + "/5<br>Current status: " + esc(row.status) + "</p><blockquote>" + esc(row.body) + '</blockquote><form method="POST" action="' + esc(url.pathname + url.search) + '"><button type="submit" class="' + action + '">' + label + " review</button></form><p>Nothing changes until you press the button.</p>");
+  } catch { return error(500, "server"); }
+}
+
+// Emails the site owner about a new pending review. Never blocks or breaks saving the review.
+function notifyNewReview(env, ctx, origin, review) {
+  try {
+    if (!env.EMAIL || !env.NOTIFY_TO || !env.NOTIFY_FROM) return;
+    const task = (async function () {
+      let actions = "To approve, run this in the D1 console (aitoolhub-db):\nUPDATE reviews SET status='approved' WHERE id=" + review.id + ";";
+      if (env.MODERATE_SECRET && review.id) {
+        const id = String(review.id);
+        actions = "APPROVE (show it on the website):\n" + origin + "/api/moderate?id=" + id + "&action=approve&sig=" + await signLink(env.MODERATE_SECRET, id, "approve") +
+          "\n\nREJECT (never show it):\n" + origin + "/api/moderate?id=" + id + "&action=reject&sig=" + await signLink(env.MODERATE_SECRET, id, "reject") +
+          "\n\nEach link opens a page where you press a button to confirm. Nothing changes until you press it.";
+      }
+      await env.EMAIL.send({
+        to: env.NOTIFY_TO,
+        from: env.NOTIFY_FROM,
+        subject: "New review to approve: " + review.slug + " (" + review.rating + "/5)",
+        text: "A reader sent a new review. It is NOT shown on the website until you approve it.\n\n" +
+          "Tool: " + review.slug + "\nName: " + review.name + "\nRating: " + review.rating + "/5\n\n" + review.body + "\n\n" + actions
+      });
+    })().catch(function () {});
+    if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(task);
+  } catch (e) {}
+}
+
+async function reviews(request, env, ctx) {
   const url = new URL(request.url);
   if (request.method === "GET") {
     if (url.searchParams.get("latest") === "1") {
@@ -80,7 +166,8 @@ async function reviews(request, env) {
   try {
     const pending = await env.DB.prepare("SELECT COUNT(*) AS count FROM reviews WHERE status = 'pending'").first();
     if (Number(pending && pending.count) >= 200) return error(429, "busy");
-    await env.DB.prepare("INSERT INTO reviews (tool_slug, display_name, rating, body) VALUES (?, ?, ?, ?)").bind(slug, name, data.rating, body).run();
+    const saved = await env.DB.prepare("INSERT INTO reviews (tool_slug, display_name, rating, body) VALUES (?, ?, ?, ?)").bind(slug, name, data.rating, body).run();
+    notifyNewReview(env, ctx, new URL(request.url).origin, { id: saved && saved.meta && saved.meta.last_row_id, slug, name, rating: data.rating, body });
     return json({ ok: true }, 201);
   } catch { return error(500, "server"); }
 }
@@ -102,7 +189,8 @@ async function subscribe(request, env) {
 export default {
   async fetch(request, env, ctx) {
     const pathname = new URL(request.url).pathname;
-    if (pathname === "/api/reviews") return reviews(request, env);
+    if (pathname === "/api/reviews") return reviews(request, env, ctx);
+    if (pathname === "/api/moderate") return moderate(request, env);
     if (pathname === "/api/subscribe") return subscribe(request, env);
     if (pathname.startsWith("/api/")) return error(404, "not_found");
     return env.ASSETS.fetch(request);

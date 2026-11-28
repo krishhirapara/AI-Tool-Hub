@@ -9,6 +9,13 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
   },
+  "send_email": [
+    { "name": "EMAIL", "remote": true }
+  ],
+  "vars": {
+    "NOTIFY_TO": "aitoolhub.co.in@gmail.com",
+    "NOTIFY_FROM": "reviews@www.aitoolhub.co.in"
+  },
   "d1_databases": [
     { "binding": "DB", "database_name": "aitoolhub-db", "database_id": "78007905-856f-4bc5-be60-b717156e9373" }
   ]
